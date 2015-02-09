@@ -7,7 +7,7 @@ var config      = require('./config.json');
 // Setup express
 var app = express();
 
-var port = process.env.PORT || config.port || 81234;
+var port = process.env.PORT || config.port || 8123;
 var router = express.Router();
 
 // Setup connection to cjdns routers
