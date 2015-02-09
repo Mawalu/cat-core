@@ -25,8 +25,10 @@ fs.readdir('plugins/', function(err, files) {
 });
 
 // Start webserver
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use('/api', router);
+
 app.listen(port);
 
 // Ready
