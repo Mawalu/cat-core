@@ -1,0 +1,29 @@
+{
+  "name": "cat-core",
+  "version": "0.0.1",
+  "description": "Core of the cjdns admin tool",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/c-a-t/core.git"
+  },
+  "keywords": [
+    "cjdns"
+  ],
+  "author": "mawalu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/c-a-t/core/issues"
+  },
+  "homepage": "https://github.com/c-a-t/core",
+  "dependencies": {
+    "body-parser": "^1.11.0",
+    "cjdns-admin": "^0.1.1",
+    "express": "^4.11.2",
+    "lowdb": "^0.6.1",
+    "uuid": "^2.0.1"
+  }
+}
