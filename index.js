@@ -2,7 +2,7 @@ var db          = require('lowdb')('db.json');
 var fs          = require('fs');
 var express     = require('express');
 var bodyParser  = require('body-parser');
-var config      = require('./config.json');
+var config      = require('./config');
 
 // Setup express
 var app = express();
@@ -12,6 +12,11 @@ var router = express.Router();
 
 // Setup connection to cjdns routers
 var cjdns = {};
+db('nodes').value().forEach(function(node) {
+    cjdns[node.id] = require('./adapters/' + node.adapter);
+    cjdns[node.id].connect(node);
+    cjdns[node.id].ping();
+});
 
 // Load plugins
 fs.readdir('plugins/', function(err, files) {
