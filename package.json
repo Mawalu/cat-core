@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/c-a-t/core.git"
+    "url": "https://github.com/mawalu/cat-core.git"
   },
   "keywords": [
     "cjdns"
@@ -16,9 +16,9 @@
   "author": "mawalu",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/c-a-t/core/issues"
+    "url": "https://github.com/mawalu/cat-core/issues"
   },
-  "homepage": "https://github.com/c-a-t/core",
+  "homepage": "https://github.com/mawalu/cat-core",
   "dependencies": {
     "body-parser": "^1.11.0",
     "cjdns-admin": "^0.1.1",
