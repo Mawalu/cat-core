@@ -36,6 +36,10 @@ module.exports = {
       required: true,
       unique: true
     },
+    connections: {
+      colletion: 'connection',
+      via: 'node'
+    },
     status: {
       type: 'boolean',
       defaultsTo: false
