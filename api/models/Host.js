@@ -36,7 +36,7 @@ module.exports = {
       required: true,
       unique: true
     },
-    connections: {
+    peers: {
       colletion: 'connection',
       via: 'node'
     },

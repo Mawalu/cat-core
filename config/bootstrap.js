@@ -11,6 +11,10 @@
 
 module.exports.bootstrap = function(cb) {
 
+  cjdroute.setup(function(err) {
+    if(err) throw err;
+  });
+
   // It's very important to trigger this callback method when you are finished
   // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
   cb();
