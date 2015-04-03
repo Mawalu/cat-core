@@ -32,16 +32,45 @@ cjdroute = {
   syncAuthorizedPasswords: function(callback) {
     Host.find({adapter: 'cjdroute'}).populateAll().exec(function(err,result) {
       if(err) throw err;
-      async.map(result, function(host, cb) {
-        cjdroute.callAdminWithCallback(cjdroute.connections[host.cjdnsIp],
+      async.each(result, function(host, cb) {
+        async.parallel([
+          function(callback) {
+            cjdroute.callAdminWithCallback(cjdroute.connections[host.cjdnsIp].admin,
                 'AuthorizedPasswords_list',
                 function(res) {
+                    sails.log.info(res);
                     cb(null, res);
                 });
-      }, function(err, result) {
+          },
+          function(callback) {
+
+          }
+        ], function(err, result) {
+
+        });
+      }, function(err) {
         if(err) callback(err);
-        callback(result);
+        callback(null);
       });
+    });
+  },
+
+  /**
+   * Set the online status for a cjdroute node
+   *
+   * @param {string}    the nodes cjdnsIp
+   * @param {boolean}   status
+   * @param {function}  callback
+   */
+  setOnlineStatus: function(node, status, cb) {
+    Host.update({cjdnsIp: node}, {status: status}).exec(function(err, result) {
+      if(err) return cb(err);
+      var instance = cjdroute.connections[node];
+      if(instance.online != status) {
+        sails.log.debug(node, status);
+      }
+      instance.online = status;
+      cb(null, result);
     });
   },
 
@@ -52,7 +81,7 @@ cjdroute = {
    *
    * @param {Function}  callback
    */
-  setup: function(callback) {
+  setupConnections: function(callback) {
 
     async.waterfall([
       function(cb) {
@@ -63,12 +92,45 @@ cjdroute = {
       },
       function(hosts, cb) {
         async.each(hosts, function(host, done) {
-          cjdroute.connections[host.cjdnsIp] = require('cjdns-admin').Admin(
-                      {
+          if(cjdroute.connections[host.cjdnsIp]) {
+            return done(null)
+          }
+          cjdroute.connections[host.cjdnsIp] = {
+              admin: require('cjdns-admin').Admin({
                         ip: host.adminIp,
                         port: host.adminPort,
                         password: host.adminPassword
-                      });
+                      }),
+              timer: setInterval(function(cjdnsIp) {
+                        var status
+                          , connection = cjdroute.connections[cjdnsIp];
+
+                        if(new Date().getTime() - connection.lastPong.getTime() <= 20000) {
+                          status = true;
+                        } else {
+                          status = false;
+                        }
+
+                        sails.log.verbose(cjdnsIp, status);
+
+                        cjdroute.setOnlineStatus(cjdnsIp, status, function(err, r){
+                          if(err) throw err
+                        });
+
+                        sails.log.verbose(connection);
+                        cjdroute.callAdminWithCallback(connection.admin, 'ping', function(respons) {
+                          if(respons.data.q == 'pong') {
+                            cjdroute.connections[cjdnsIp].lastPong = new Date();
+                            sails.log.verbose(cjdnsIp, 'pong');
+                          } else {
+                            sails.log.debug(cjdnsIp, respons);
+                          }
+                        });
+
+                      }, 10000, host.cjdnsIp),
+              online: false,
+              lastPong: new Date()
+          };
           done(null);
         }, function(err) {
             if(err) cb(err);

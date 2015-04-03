@@ -11,7 +11,7 @@
 
 module.exports.bootstrap = function(cb) {
 
-  cjdroute.setup(function(err) {
+  cjdroute.setupConnections(function(err) {
     if(err) throw err;
   });
 

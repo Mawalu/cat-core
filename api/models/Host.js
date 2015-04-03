@@ -44,6 +44,11 @@ module.exports = {
       type: 'boolean',
       defaultsTo: false
     }
+  },
+
+  beforeCreate: function(values, cb) {
+    if(!values.adminIp) values.adminIp = values.cjdnsIp;
+    cb();
   }
 };
 
